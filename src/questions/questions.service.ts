@@ -1,4 +1,5 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, UseGuards } from '@nestjs/common';
+import { AuthGuard } from 'src/auth/auth.guard';
 import { PrismaService } from 'src/database/prisma.service';
 import { CreateQuestionDto } from './dto/create-question.dto';
 import { UpdateQuestionDto } from './dto/update-question.dto';
@@ -8,28 +9,38 @@ export class QuestionsService {
   @Inject()
   private readonly prismaService: PrismaService;
 
-  async create(createQuestionDto: CreateQuestionDto) {
-    const userId = 1; // This should be replaced with the actual user ID from the request context
+  @UseGuards(AuthGuard)
+  async create(createQuestionDto: CreateQuestionDto, userId: number) {
     return await this.prismaService.question.create({
       data: { ...createQuestionDto, userId },
     });
   }
 
-  findAll() {
-    return this.prismaService.question.findMany();
+  @UseGuards(AuthGuard)
+  async findAll() {
+    return await this.prismaService.question.findMany();
   }
 
-  findOne(id: number) {
-    return this.prismaService.question.findUnique({
+  @UseGuards(AuthGuard)
+  async findOne(id: number) {
+    return await this.prismaService.question.findUnique({
       where: { id },
     });
   }
 
-  update(id: number, updateQuestionDto: UpdateQuestionDto) {
-    return `This action updates a #${id} question`;
+  @UseGuards(AuthGuard)
+  async update(id: number, updateQuestionDto: UpdateQuestionDto) {
+    const userId = 1;
+    return await this.prismaService.question.update({
+      where: { id },
+      data: updateQuestionDto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} question`;
+  @UseGuards(AuthGuard)
+  async remove(id: number) {
+    return await this.prismaService.question.delete({
+      where: { id },
+    });
   }
 }
