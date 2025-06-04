@@ -1,5 +1,6 @@
-import { Answer as PrismaAnswer, Question, User } from '@prisma/client';
-// Update the import path below to match the actual location and filename of your Questions entity
+import { Answer as PrismaAnswer } from '@prisma/client';
+import { User } from 'src/user/entities/user.entity';
+import { Question } from '../../questions/entities/question.entity';
 
 export class Answer implements PrismaAnswer {
   id: number;
