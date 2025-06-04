@@ -23,7 +23,7 @@ export class AuthService {
     if (!user) throw new NotFoundException('User not found');
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
-    const payload = { sub: user.id };
+    const payload = { email: user.email, sub: user.id };
     return { access_token: await this.jwtService.signAsync(payload) };
   }
 }
