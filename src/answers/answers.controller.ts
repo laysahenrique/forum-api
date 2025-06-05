@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Request,
@@ -21,14 +22,14 @@ export class AnswersController {
   @UseGuards(AuthGuard)
   @Post(':questionId')
   create(
-    @Param('questionId') questionId: string,
+    @Param('questionId', ParseIntPipe) questionId: number,
     @Body() createAnswerDto: CreateAnswerDto,
     @Request() res,
   ) {
     return this.answersService.create(
       createAnswerDto,
       res.user.userId,
-      Number(questionId),
+      questionId,
     );
   }
 
@@ -40,19 +41,22 @@ export class AnswersController {
 
   @Get(':id')
   @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.answersService.findOne(+id);
   }
 
   @Patch(':id')
   @UseGuards(AuthGuard)
-  update(@Param('id') id: string, @Body() updateAnswerDto: UpdateAnswerDto) {
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateAnswerDto: UpdateAnswerDto,
+  ) {
     return this.answersService.update(+id, updateAnswerDto);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard)
-  remove(@Param('id') id: string) {
+  remove(@Param('id', ParseIntPipe) id: number) {
     return this.answersService.remove(+id);
   }
 }

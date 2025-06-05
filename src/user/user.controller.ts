@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UseGuards,
@@ -17,33 +18,33 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Post()
-  async signup(@Body() userData: Prisma.UserCreateInput): Promise<UserModel> {
-    return this.userService.createUser(userData);
+  async create(@Body() userData: Prisma.UserCreateInput): Promise<UserModel> {
+    return await this.userService.createUser(userData);
   }
 
   @UseGuards(AuthGuard)
   @Get(':id')
-  async getUser(
-    @Param('id') id: string,
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<Omit<UserModel, 'password'> | null> {
-    return this.userService.user({ id: Number(id) });
+    return await this.userService.user({ id });
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
-  async updateUser(
-    @Param('id') id: string,
+  async update(
+    @Param('id', ParseIntPipe) id: number,
     @Body() userData: Prisma.UserUpdateInput,
   ): Promise<UserModel> {
-    return this.userService.updateUser({
-      where: { id: Number(id) },
+    return await this.userService.updateUser({
+      where: { id: id },
       data: userData,
     });
   }
 
   @UseGuards(AuthGuard)
   @Delete(':id')
-  async deleteUser(@Param('id') id: string): Promise<UserModel> {
-    return this.userService.deleteUser({ id: Number(id) });
+  async remove(@Param('id', ParseIntPipe) id: number): Promise<UserModel> {
+    return await this.userService.deleteUser({ id });
   }
 }
